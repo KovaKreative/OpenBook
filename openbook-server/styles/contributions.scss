@@ -1,0 +1,58 @@
+@use 'variables';
+
+.contributions-box {
+  display: flex;
+  margin: 1em auto;
+  flex-wrap: wrap;
+  width: 80%;
+  font-size: 24px;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}
+
+.contribution {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid variables.$text-normal;
+  height: 15em;
+  width: 15em;
+  justify-content: center;
+  align-items: center;
+  gap: .5em;
+  text-align: center;
+}
+
+.winner{
+  text-decoration: underline;
+}
+
+.pub-date{
+  font-size: .75em;
+}
+
+.upvote-btn{
+  font-size: 1em;
+}
+
+.plus {
+  align-items: center;
+}
+
+.contribution:hover {
+  color: variables.$link-highlighted;
+  border: 1px solid variables.$link-highlighted;
+  cursor: pointer;
+}
+
+
+.stop:hover {
+  color: variables.$link-highlighted;
+  border: 1px solid variables.$link-highlighted;
+  cursor: pointer;
+}
+
+.contribution.stop {
+  display: flex;
+  text-align: center;
+}

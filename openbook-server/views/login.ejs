@@ -1,0 +1,20 @@
+<%- include('partials/_header', {title: "Log In - Open Book", userName: null }); %>
+
+
+<div class="container centered">
+
+  <main class="registry">
+    <h2>Log Into Open Book</h2>
+    <form method="POST" action="/login">
+      <label for="email">Email Address</label>
+      <input type="email" name="email">
+      <label for="password">Password</label>
+      <input type="password" name="password" autofill="false">
+      <button type="submit">Log In</button>
+    </form>
+
+  </main>
+
+</div>
+
+<%- include('partials/_footer'); %>

@@ -1,0 +1,22 @@
+<nav>
+  <div class = "links">
+    <a href = '/read'>Read Stories</a>
+    <a href = '/story/new'>Write Stories</a>
+  </div>
+
+  <div class = "greeting">
+    Open Book
+  </div>
+
+
+  <div class = "access">
+    <% if (userName) { %>
+      <p>Hello, <%= userName %>!</p>
+      <a href="/logout">Log Out</a>
+    <% } else { %>
+      <a href="/login">Log In</a>
+      <a href="/register">Sign Up</a>
+    <% } %>
+  </div>
+</nav>
+

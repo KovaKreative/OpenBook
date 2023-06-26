@@ -1,0 +1,20 @@
+<%- include('partials/_header', {title: "Register - Open Book", userName: null }); %>
+
+<div class="container centered">
+
+<main class = "registry">
+  <h2>Register to Open Book</h2>
+  <form method="POST" action="/register">
+    <label for="name">Name</label>
+    <input type="text" name="name" maxlength="30">
+    <label for="email">Email Address</label>
+    <input type="email" name="email" maxlength="30">
+    <label for="password">Password</label>
+    <input type="password" name="password" autofill="false">
+    <button type="submit">Register</button>
+  </form>
+</main>
+
+</div>
+
+<%- include('partials/_footer'); %>

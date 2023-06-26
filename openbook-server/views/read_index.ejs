@@ -1,0 +1,113 @@
+<%- include('partials/_header', {title: "Read Stories - Open Book"}); %>
+
+<div class = 'container'>
+  <section class = 'all-stories third'>
+    <h1>All Stories</h1>
+    <% if(!allStories.length) { %>
+      <p>There don't seem to be any stories in our database. You can be our first author!</p>
+    <% }; %>
+      <div class="card-box">
+      <% allStories.forEach(story => { %>
+        <div class = "story-card">
+          <a href="/read/<%= story.id %>">
+          <%= story.story_title %><% if (story.completed) { %>
+            - Completed
+          <% } else { %>
+            - Ongoing
+          <% } %>
+          </a>
+          <p>By <%= story.name %>, Published <%= story.publish_date %></p>
+          <p><%= story.genre %> / <%= story.category %></p>
+          <p class = 'description'><%= story.description %></p>
+        </div>
+      <% }); %>
+      </div>
+      <div class = "card-box">
+
+      </div>
+  </section>
+  <section class = 'my-stories third'>
+    <h1>My Stories</h1>
+    <% if(!myStories.length) { %>
+      <p>You don't have any stories yet. <a href="/story/new">Write</a> one!</p>
+    <% }; %>
+    <div class="card-box" id="my-stories-cards">
+      <% myStories.forEach(story => { %>
+        <div class="story-card">
+          <div class = "story-card-top">
+          <h2>
+          <%= story.story_title %>
+        </h2>
+        <h4 class = 'published date'>Published : <%= story.publish_date %></h4>
+        </div>
+        <ul>
+          <li><a href="/read/<%= story.id %>">Read</a></li>
+          <li><a href="/manage/edit/<%= story.id %>">Edit</a></li>
+          <li>
+            <form method="POST" action="/manage/delete/<%= story.id %>">
+              <button type="submit" class="danger">Delete</button>
+            </form>
+          </li>
+        </ul>
+        <ul>
+          <li>
+        <p>
+        <% if (story.published) { %>
+          This story has been published and is visible to the public.<br>Unpublish it to hide it from public view.</p></li>
+          <li><form method="POST" action="/manage/publish/<%= story.chapter_id %>/false">
+            <button type="submit" class="danger">Unpublish</button>
+          </form>
+        <% } else { %>
+          This story has not yet been published.<br>Publish it to make it visible to the public.</p></li>
+          <li><form method="POST" action="/manage/publish/<%= story.chapter_id %>/true">
+            <button type="submit" class="danger">Publish</button>
+          </form>
+        <% } %>
+      </li>
+      </ul>
+      <ul>
+        <li>
+        <p>
+        <% if (story.completed) { %>
+          This story is completed and/or closed to further contributions.<br>Open it again to contributions.</p></li>
+          <li><form method="POST" action="/manage/close/<%= story.id %>/false">
+            <button type="submit" class="danger">Open</button>
+          </form>
+        <% } else { %>
+          This story is currently open to contributions.<br>Close it to prevent further contributions.</p></li>
+          <li><form method="POST" action="/manage/close/<%= story.id %>/true">
+            <button type="submit" class="danger">Close</button>
+          </form>
+        <% } %>
+        </li>
+      </ul>
+        </div>
+      <% }); %>
+      </div>
+  </section>
+
+  <section class = 'my-contributions third'>
+    <h1>My Contributions</h1>
+    <% if(!myContributions.length) { %>
+      <p>You haven't contributed to any stories yet.</p>
+    <% }; %>
+      <div class ="contribution-box">
+        <% myContributions.forEach(contribution => { %>
+          <div class = "contribution-card">
+            <h3><%= contribution.title %><h3>
+              <ul class = "methods">
+                <li><a href="/contribution/<%= contribution.contribution_id %>">Read</a></li>
+                <li><a href="/contribute/edit/<%= contribution.contribution_id %>">Edit</a></li>
+                <li>
+                  <form method="POST" action="/contribution/delete/<%= contribution.contribution_id %>">
+                    <button type="submit" class="danger">Delete</button>
+                  </form>
+                </li>
+              </ul>
+          </div>
+        <% }); %>
+      </div>
+  </section>
+</div>
+
+<%- include('partials/_footer'); %>

@@ -1,0 +1,42 @@
+<%- include('partials/_header', {title: "Open Book" }); %>
+
+  <div class="container">
+    <div class="contributions-box">
+      <% if (storyStatus[0].completed===true) { %>
+        <div class="contribution stop">The story is complete, nothing more to say!</div>
+        <% } else { %>
+          <div class="contribution plus" id="plus-card" name="<%= storyId %>">+ Add Contribution</div>
+          <% } %>
+            <% contributions.forEach(contribution=> { %>
+              <div class="contribution entry" data-contribution-id="<%= contribution.contributions_id %>">
+                <% if (winners.includes(contribution.contributions_id)) { %>
+                  <div class="winner">** Chosen by Author **</div>
+                <% } %>
+                <div>
+                  <%= contribution.title %>
+                </div>
+                <div>
+                  By: <%= contribution.name %>
+                </div>
+                <div class = "pub-date">
+                  Published: <%= contribution.publish_date %>
+                </div>
+                <div id="<%= contribution.contributions_id %>">
+                  <%= contribution.upvotes %>
+                  <%= contribution.upvotes==='1' ? 'Upvote' : 'Upvotes' %>
+                </div>
+                <div>
+                  <% if(!upvotes.includes(contribution.contributions_id)) { %>
+                    <button class="upvote-btn" data-contribution-id="<%= contribution.contributions_id %>">Upvote</button>
+                  <% } else { %>
+                    <button class="upvote-btn" data-contribution-id="<%= contribution.contributions_id %>">Upvoted</button>
+                  <% } %>
+                </div>
+              </div>
+              <% }); %>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="/scripts/contribution-card.js"></script>
+
+  <%- include('partials/_footer'); %>

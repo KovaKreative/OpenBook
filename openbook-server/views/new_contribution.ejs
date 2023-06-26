@@ -1,0 +1,54 @@
+<%- include('partials/_header', {title: "Write Contribution - Story Maker" }); %>
+<div class="container centered">
+  <main id="story-editor">
+    <h2>New Contribution</h2>
+    <% if(lastChapter) { %>
+    <form method="POST" id="draft" action="/contribute/<%= storyInfo.id %>/<%= lastChapter.winner_id %>">
+      <% } else { %>
+        <form method="POST" id="draft" action="/contribute/<%= storyInfo.id %>/null">
+      <% }; %>
+      <div>
+        <h2 id="story-title">Story: <%= storyInfo.story_title %>
+        </h2>
+        <h3 id="original-author">By: <%= storyInfo.author_name %>
+        </h3>
+      </div>
+      <div>
+        <% if(lastChapter) { %>
+        <h4 id="previous-chapter">Previous chapter: <%= lastChapter.chapter_title %>
+        </h4>
+        <h4 id="chapter-author">By: <%= lastChapter.contributor_name %>
+        </h4>
+        <% } else { %>
+          <h4 id="previous-chapter">Previous chapter: <%= storyInfo.chapter_title %>
+          </h4>
+        <% }; %>
+        </div>
+      <label for="chapterTitle">Chapter Title</label>
+      <input type="text" name="chapterTitle" autocomplete="off">
+      <%- include('partials/_text_editor', { body: "" }) %>
+      <div id="success" class="hidden notification">
+
+      </div>
+      <div id="fail" class="hidden notification">
+
+      </div>
+      <footer>
+          <div>
+            <p>Letter count: <span id="letter-counter">0</span></p>
+            <p>Word count: <span id="word-counter">0</span></p>
+          </div>
+          <div class= "action-buttons">
+            <button id="save-story">Save</button>
+            <button id="publish">Publish</button>
+            <button id="discard-story">Discard</button>
+          </div>
+        </footer>
+
+    </form>
+
+  </main>
+  <script type="text/javascript" src="/scripts/stats.js"></script>
+  <script type="text/javascript" src="/scripts/contribute-actions.js"></script>
+
+  <%- include('partials/_footer'); %>

@@ -12,8 +12,12 @@
       </div>
       <div class="navbar-menu" v-bind:class="{ 'is-active': isActive }">
         <div class="navbar-end">
-          <router-link to="/new" class="navbar-item">New Story</router-link>
-          <router-link to="/" class="navbar-item">Log In/Register</router-link>
+          <div v-if="user">
+            <p>Hello, {{ user.name }}!</p>
+            <router-link to="/new" class="navbar-item">New Story</router-link>
+            <router-link to="/logout" class="navbar-item">Log Out</router-link>
+          </div>
+          <router-link to="/" class="navbar-item" v-if="!user">Log In/Register</router-link>
         </div>
       </div>
     </div>
@@ -21,6 +25,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
   name: 'navbar',
   data: function() {
@@ -32,7 +37,8 @@ export default {
     toggleNav: function() {
       this.isActive = !this.isActive;
     }
-  }
+  },
+  computed: {...mapGetters(['user'])}
 };
 </script>
 

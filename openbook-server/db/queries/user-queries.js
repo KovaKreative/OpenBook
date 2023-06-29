@@ -21,6 +21,7 @@ const registerNewUser = (user) => {
 };
 
 const getUserByEmail = (email) => {
+  console.log("Email to search:", email);
   return db.query(`SELECT * FROM users WHERE email = $1`, [email])
     .then(user => {
       return user.rows[0];

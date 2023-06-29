@@ -1,16 +1,17 @@
 <template>
   <section class="login">
     <div class="toggle-tabs">
-      <button class="tab" v-bind:class="{ 'active': isUser }" v-on:click="toggleLogin()">Log In</button>
-      <button class="tab" v-bind:class="{ 'active': !isUser }" v-on:click="toggleLogin(false)">Register</button>
+      <button class="tab" v-bind:class="{ 'active': isUser }" @click="toggleLogin()">Log In</button>
+      <button class="tab" v-bind:class="{ 'active': !isUser }" @click="toggleLogin(false)">Register</button>
     </div>
     <div class="form-container">
-      <div class="login-form" v-bind:class="{ 'hidden': !isUser }">
+      <div class="notification" v-if="notification.length">{{ notification }}</div>
+      <div class="login-form" @submit.prevent="login(loginForm)" v-bind:class="{ 'hidden': !isUser }">
         <form>
           <div class="field is-horizontal">
             <label class="label field-label is-normal">E-mail</label>
             <div class="control has-icons-left field-body">
-              <input class="input" type="email">
+              <input class="input" type="email" v-model="loginForm.email">
               <span class="icon is-small is-left">
                 <i class="fas fa-envelope"></i>
               </span>
@@ -19,7 +20,7 @@
           <div class="field is-horizontal">
             <label class="label field-label is-normal">Password</label>
             <div class="control has-icons-left field-body">
-              <input class="input" type="password">
+              <input class="input" type="password" v-model="loginForm.password">
               <span class="icon is-small is-left">
                 <i class="fas fa-key"></i>
               </span>
@@ -87,18 +88,43 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'login',
   data: function() {
     return {
-      isUser: true
+      isUser: true,
+      notification: '',
+      loginForm: { email: '', password: '' }
     };
   },
   methods: {
-    toggleLogin: function(activate=true) {
+    // Toggles between the login form and the registration form
+    toggleLogin: function(activate = true) {
       this.isUser = activate;
+    },
+    login: function(data) {
+      axios.post(`/login`, { email: data.email, password: data.password },
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          withCredentials: true
+        })
+        .then(res => {
+          console.log(res);
+          if (res.data.err) {
+            return this.notification = res.data.err;
+          }
+          this.loginForm = { email: '', password: '' };
+          // this.session.user = { ...res.data };
+          this.$store.dispatch('user', res.data.user);
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
-
   }
 };
 </script>

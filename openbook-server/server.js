@@ -2,10 +2,10 @@
 require('dotenv').config();
 
 // Web server config
-const sassMiddleware = require('./lib/sass-middleware');
 const express = require('express');
 const morgan = require('morgan');
 const cookieSession = require('cookie-session');
+const cors = require('cors');
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -17,15 +17,12 @@ app.set('view engine', 'ejs');
 //         The :status token will be colored red for server error codes, yellow for client error codes, cyan for redirection codes, and uncolored for all other codes.
 app.use(morgan('dev'));
 app.use(cookieSession({ name: 'session', keys: ['lazyEgg'], maxAge: 365 * 24 * 60 * 60 * 1000 }));
+app.use(cors({
+  origin: 'http://localhost:8080',
+  methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD'],
+  credentials: true
+}));
 app.use(express.urlencoded({ extended: true }));
-app.use(
-  '/styles',
-  sassMiddleware({
-    source: __dirname + '/styles',
-    destination: __dirname + '/public/styles',
-    isSass: false, // false => scss, true => sass
-  })
-);
 app.use(express.static('public'));
 
 // Separated Routes for each Resource

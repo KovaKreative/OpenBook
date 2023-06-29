@@ -10,13 +10,16 @@
 </template>
 
 <script>
+
+import { mapGetters } from 'vuex';
 import Login from './Login.vue';
 
 export default {
   name: 'home',
   components: {
     Login
-  }
+  },
+  computed: { ...mapGetters['user'] }
 };
 </script>
 

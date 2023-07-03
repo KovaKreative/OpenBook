@@ -11,13 +11,13 @@
         </a>
       </div>
       <div class="navbar-menu" v-bind:class="{ 'is-active': isActive }">
-        <div class="navbar-end">
-          <div v-if="user">
-            <p>Hello, {{ user.name }}!</p>
-            <router-link to="/new" class="navbar-item">New Story</router-link>
-            <router-link to="/logout" class="navbar-item">Log Out</router-link>
-          </div>
-          <router-link to="/" class="navbar-item" v-if="!user">Log In/Register</router-link>
+        <div class="navbar-end" v-if="user">
+          <p class="navbar-item">Hello, {{ user.name }}!</p>
+          <router-link to="/new" class="navbar-item">New Story</router-link>
+          <a v-on:click="logOut" class="navbar-item">Log Out</a>
+        </div>
+        <div class="navbar-end" v-if="!user">
+          <router-link to="/" class="navbar-item">Log In/Register</router-link>
         </div>
       </div>
     </div>
@@ -26,6 +26,9 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import axios from 'axios';
+import router from '../../../router';
+
 export default {
   name: 'navbar',
   data: function() {
@@ -36,9 +39,22 @@ export default {
   methods: {
     toggleNav: function() {
       this.isActive = !this.isActive;
+    },
+    logOut: function() {
+      axios.get(`/logout`)
+        .then(res => {
+          console.log(res);
+          if (res.data.success) {
+            router.push({ path: '/' });
+            this.$store.dispatch('user', null);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
   },
-  computed: {...mapGetters(['user'])}
+  computed: { ...mapGetters(['user']) }
 };
 </script>
 

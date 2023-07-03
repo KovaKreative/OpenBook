@@ -12,6 +12,7 @@
 <script>
 
 import { mapGetters } from 'vuex';
+// import router from '../router';
 import Login from './Login.vue';
 
 export default {
@@ -19,7 +20,13 @@ export default {
   components: {
     Login
   },
-  computed: { ...mapGetters['user'] }
+  computed: { ...mapGetters['user'] },
+  created: function() {
+    console.log(this);
+    if(this.user) {
+      router.push({ path: '/read' })
+    }
+  }
 };
 </script>
 

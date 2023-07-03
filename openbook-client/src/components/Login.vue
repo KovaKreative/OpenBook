@@ -5,7 +5,9 @@
       <button class="tab" v-bind:class="{ 'active': !isUser }" @click="toggleLogin(false)">Register</button>
     </div>
     <div class="form-container">
-      <div class="notification" v-if="notification.length">{{ notification }}</div>
+      <div class="notification is-danger" v-if="notifications.length">
+        <div v-for="note in notifications">{{ note }}</div>
+      </div>
       <div class="login-form" @submit.prevent="login(loginForm)" v-bind:class="{ 'hidden': !isUser }">
         <form>
           <div class="field is-horizontal">
@@ -31,12 +33,12 @@
           </button>
         </form>
       </div>
-      <div class="register-form" v-bind:class="{ 'hidden': isUser }">
+      <div class="register-form" @submit.prevent="register(registerForm)" v-bind:class="{ 'hidden': isUser }">
         <form>
           <div class="field is-horizontal">
             <label class="label field-label is-normal">Username</label>
             <div class="control has-icons-left field-body">
-              <input class="input" type="text" placeholder="e.g. Bram Stoker">
+              <input class="input" type="text" v-model="registerForm.userName" placeholder="e.g. Bram Stoker">
               <span class="icon is-small is-left">
                 <i class="fas fa-user"></i>
               </span>
@@ -45,7 +47,7 @@
           <div class="field is-horizontal">
             <label class="label field-label is-normal">E-mail</label>
             <div class="control has-icons-left field-body">
-              <input class="input" type="email" placeholder="e.g. blackbeard@pirates.org">
+              <input class="input" type="email" v-model="registerForm.email" placeholder="e.g. blackbeard@pirates.org">
               <span class="icon is-small is-left">
                 <i class="fas fa-envelope"></i>
               </span>
@@ -54,7 +56,7 @@
           <div class="field is-horizontal">
             <label class="label field-label is-normal">Confirm</label>
             <div class="control has-icons-left field-body">
-              <input class="input" type="email">
+              <input class="input" type="email" v-model="registerForm.emailConfirm">
               <span class="icon is-small is-left">
                 <i class="fas fa-envelope"></i>
               </span>
@@ -63,7 +65,7 @@
           <div class="field is-horizontal">
             <label class="label field-label is-normal">Password</label>
             <div class="control has-icons-left field-body">
-              <input class="input" type="password" placeholder="8+ characters">
+              <input class="input" type="password" v-model="registerForm.password" placeholder="8+ characters">
               <span class="icon is-small is-left">
                 <i class="fas fa-key"></i>
               </span>
@@ -72,7 +74,7 @@
           <div class="field is-horizontal">
             <label class="label field-label is-normal">Re-enter</label>
             <div class="control has-icons-left field-body">
-              <input class="input" type="password">
+              <input class="input" type="password" v-model="registerForm.passwordConfirm">
               <span class="icon is-small is-left">
                 <i class="fas fa-key"></i>
               </span>
@@ -89,22 +91,28 @@
 
 <script>
 import axios from 'axios';
-
+import router from '../router';
 export default {
   name: 'login',
   data: function() {
     return {
       isUser: true,
-      notification: '',
-      loginForm: { email: '', password: '' }
+      notifications: [],
+      loginForm: { email: '', password: '' },
+      registerForm: { userName: '', email: '', emailConfirm: '', password: '', passwordConfirm: '' }
     };
   },
   methods: {
     // Toggles between the login form and the registration form
     toggleLogin: function(activate = true) {
+      this.notifications = [];
       this.isUser = activate;
     },
     login: function(data) {
+      this.notifications = [];
+      if (!this.loginForm.email || !this.loginForm.password) {
+        return this.notifications.push("Please enter an email and password.");
+      }
       axios.post(`/login`, { email: data.email, password: data.password },
         {
           headers: {
@@ -115,15 +123,71 @@ export default {
         .then(res => {
           console.log(res);
           if (res.data.err) {
-            return this.notification = res.data.err;
+            console.log(res.data.err);
+            return this.notifications.push(res.data.err);
           }
           this.loginForm = { email: '', password: '' };
-          // this.session.user = { ...res.data };
           this.$store.dispatch('user', res.data.user);
+          router.push({ path: '/read' });
         })
         .catch(err => {
           console.log(err);
         });
+    },
+    register: function(data) {
+      this.notifications = [];
+
+      // Prevent submission if fields are not filled in
+      for (const field in this.registerForm) {
+        if (!this.registerForm[field].length) {
+          this.notifications.push("Please make sure all fields are filled in.");
+          break;
+        }
+      }
+
+      // Confirm email address
+      if (this.registerForm.email !== this.registerForm.emailConfirm) {
+        this.notifications.push("Email address doesn't match.");
+      }
+
+      // Confirm password
+      if (this.registerForm.password !== this.registerForm.passwordConfirm) {
+        console.log(this.registerForm.password, this.registerForm.passwordConfirm);
+        this.notifications.push("Password doesn't match.");
+      }
+
+      // Confirm password length
+      if (this.registerForm.password.length < 8) {
+        this.notifications.push("Password needs to be at least 8 characters.");
+      }
+
+
+      if (this.notifications.length) {
+        return this.notifications.unshift("Something is wrong:");
+      }
+
+      axios.post(`/register`, { email: data.email, password: data.password, userName: data.userName },
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          withCredentials: true
+        })
+        .then(res => {
+          console.log(res);
+          if (res.data.err) {
+            return this.notifications.push(res.data.err);
+          }
+          for (const field in this.registerForm) {
+            this.registerForm[field] = '';
+          }
+          this.$store.dispatch('user', res.data.user);
+          router.push({ path: '/read' });
+        })
+        .catch(err => {
+          console.log(err);
+        });
+
     }
   }
 };

@@ -12,9 +12,12 @@ import router from '../router';
 export default {
   name: 'read',
   created: function() {
-    axios.get(`/read/${$route.params.id}`)
+    axios.get(`/read/${this.$route.params.id}`)
       .then(res => {
-        console.log(res.data);
+        if (!res.data.success) {
+          return router.push({ path: "/stories" });
+        }
+        console.log(res.data.story);
       });
   }
 };

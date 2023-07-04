@@ -4,54 +4,29 @@ const storyQueries = require('../db/queries/story-queries');
 const helperQueries = require('../db/queries/helper-queries');
 const contributionQueries = require('../db/queries/contribution-read-queries');
 
-// renders read all page
-router.get("/all", (req, res) => {
-  // const getMyContributionsPromise = contributionQueries.getMyContributions(req.session.userID);
-  // const myStoriesPromise = storyQueries.getMyStories(req.session.userID);
-  console.log("Read page is requested");
-  storyQueries.getStories()
+// renders page for root chapters
+router.get("/:storyId", (req, res) => {
+  console.log("Story requested");
+  const storyId = req.params.storyId;
+  const getRootChapterPromise = storyQueries.getRootChapter(storyId);
+  const getChildrenChaptersPromise = storyQueries.getChildrenChapters(storyId);
+
+  Promise.all([getRootChapterPromise, getChildrenChaptersPromise])
     .then(data => {
-      return res.json({ success: true, allStories: data });
+      const [rootChapter, childrenChapters] = data;
+
+      if (!rootChapter) {
+        return res.json({ success: false, err: "Unable to fetch story." });
+      }
+
+      return res.json({ success: true, story: { rootChapter, childrenChapters } });
+
     })
     .catch(err => {
       console.error(err);
-      return res.json({ success: false, err });
+      return res.json({ success: false, err: "Unable to fetch story." });
     });
 });
-
-router.get("/:id", (req, res) => {
-  console.log("Fetching user's stories for user", req.params.id);
-  storyQueries.getMyStories(req.params.id)
-    .then(data => {
-      return res.json({ success: true, myStories: data });
-    })
-    .catch(err => {
-      console.error(err);
-      return res.json({ success: false, err });
-    });
-});
-
-// // renders page for root chapters
-// router.get("/:storyId", (req, res) => {
-//   const storyId = req.params.storyId;
-//   const getRootChapterPromise = storyQueries.getRootChapter(storyId);
-//   const getChildrenChaptersPromise = storyQueries.getChildrenChapters(storyId);
-
-
-//   Promise.all([getRootChapterPromise, getChildrenChaptersPromise])
-//     .then(data => {
-//       const [rootChapter, childrenChapters] = data;
-//       const templateVars = { rootChapter, childrenChapters, userName: req.session.userName };
-//       if (!rootChapter) {
-//         throw new Error("Unable to find story ID");
-//       }
-//       return res.render('read', templateVars);
-//     })
-//     .catch(err => {
-//       console.error(err);
-//       res.status(404).render('error_page', { message: err, userName: req.session.userName });
-//     });
-// });
 
 // // renders page for chapters
 // router.get("/:storyId/chapter/:contributionId", (req, res) => {
@@ -102,14 +77,6 @@ router.get("/:id", (req, res) => {
 //     .catch(err => {
 //       console.error(err);
 //       res.status(404).render('error_page', { message: err, userName: req.session.userName });
-//     });
-// });
-
-// // upvoting
-// router.post('/upvote', (req, res) => {
-//   helperQueries.updateUpvotes(req.body.upvoteID, req.session.userID)
-//     .then(count => {
-//       res.send(String(count.rows[0].count));
 //     });
 // });
 

@@ -28,7 +28,7 @@ app.use(express.static('public'));
 // Separated Routes for each Resource
 // Note: Feel free to replace the example routes below with your own
 const usersRoutes = require('./routes/user');
-const readRoutes = require('./routes/read');
+const storiesRoutes = require('./routes/stories');
 const newStoryRoutes = require('./routes/new-story');
 const storyManageRoutes = require('./routes/my-story');
 const contributionRoutes = require('./routes/contribute');
@@ -38,7 +38,7 @@ const readContributionRoutes = require('./routes/read-contribution');
 // Note: Feel free to replace the example routes below with your own
 // Note: Endpoints that return data (eg. JSON) usually start with `/api`
 app.use('/', usersRoutes);
-app.use('/read', readRoutes);
+app.use('/stories', storiesRoutes);
 app.use('/story', newStoryRoutes);
 app.use('/manage', storyManageRoutes);
 app.use('/contribute', contributionRoutes);

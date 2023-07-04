@@ -37,7 +37,7 @@ export default new Router({
       component: Edit
     },
     {
-      path: '/read',
+      path: '/read/:id',
       name: 'Read',
       component: Read
     }

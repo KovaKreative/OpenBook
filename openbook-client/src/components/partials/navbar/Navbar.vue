@@ -13,7 +13,7 @@
     </div>
     <div class="navbar-menu" v-bind:class="{ 'is-active': isActive }">
       <div class="navbar-end">
-        <router-link to="/read" class="navbar-item">Read Stories</router-link>
+        <router-link to="/stories" class="navbar-item">Read Stories</router-link>
         <router-link to="/new" class="navbar-item" v-if="user">New Story</router-link>
         <a v-on:click="logOut" class="navbar-item" v-if="user">Log Out</a>
         </div>

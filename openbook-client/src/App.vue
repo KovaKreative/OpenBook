@@ -11,8 +11,6 @@ import axios from 'axios';
 
 import Navbar from '../src/components/partials/navbar/Navbar';
 
-import router from './router';
-
 export default {
   name: 'App',
   components: {

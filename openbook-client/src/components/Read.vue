@@ -1,26 +1,54 @@
 <template>
   <div class='read container'>
     <section class='all-stories third'>
-      <h1>All Stories</h1>
+      <h1 class="m-3 is-size-3 has-text-weight-semibold">All Stories</h1>
       <p v-if="!allStories.length">There don't seem to be any stories in our database. You can be our first author!</p>
-      <div class="card-box">
-        <div class="story-card" v-for="story in allStories">
-          <!-- <a href="/read/{{ story.id }}"> -->
-          <!-- <%= story.story_title %>
-                    <% if (story.completed) { %>
-                      - Completed
-                      <% } else { %>
-                        - Ongoing
-                        <% } %> -->
-          <!-- </a> -->
-          <!-- <p>By <%= story.name %>, Published <%= story.publish_date %>
-                </p> -->
-          <!-- <p>
-                  <%= story.genre %> / <%= story.category %>
-                </p> -->
-          <p class='description'>
-            {{ story.description }}
-          </p>
+      <div class="container is-flex is-flex-wrap-wrap">
+        <div class="card m-2 flex-shrink" v-for="story in allStories">
+          <header class="card-header">
+            <span class="card-header-icon"><i class="fas fa-book-open" aria-hidden="true"></i></span>
+            <router-link :to="{ path: `story/${story.id}` }" :id="story.id">
+              <h1 class="card-header-title">{{ story.story_title }}
+              </h1>
+            </router-link>
+          </header>
+          <div class="card-content">
+            <p>{{ story.description }}</p>
+            <p>Status:
+              <span v-if="story.completed"> Completed</span>
+              <span v-if="!story.completed"> Ongoing</span>
+            </p>
+            <p> {{ story.genre }} / {{ story.category }}</p>
+          </div>
+          <footer class="card-footer p-2">
+            <p>By {{ story.name }}, Published {{ story.publish_date }}</p>
+          </footer>
+        </div>
+      </div>
+    </section>
+    <section class='my-stories third' v-if="user !== null">
+      <h1 class="m-3 is-size-3 has-text-weight-semibold">Your Stories</h1>
+      <p v-if="!myStories.length">You haven't started any stories yet.</p>
+      <div class="container is-flex is-flex-wrap-wrap">
+        <div class="card m-2 flex-shrink" v-for="story in myStories">
+          <header class="card-header">
+            <span class="card-header-icon"><i class="fas fa-book-open" aria-hidden="true"></i></span>
+            <router-link :to="{ path: `story/${story.id}` }" :id="story.id">
+              <h1 class="card-header-title">{{ story.story_title }}
+              </h1>
+            </router-link>
+          </header>
+          <div class="card-content">
+            <p>{{ story.description }}</p>
+            <p>Status:
+              <span v-if="story.completed"> Completed</span>
+              <span v-if="!story.completed"> Ongoing</span>
+            </p>
+            <p> {{ story.genre }} / {{ story.category }}</p>
+          </div>
+          <footer class="card-footer p-2">
+            <p>Published {{ story.publish_date }}</p>
+          </footer>
         </div>
       </div>
     </section>
@@ -28,6 +56,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 
 import axios from 'axios';
 
@@ -35,16 +64,39 @@ export default {
   name: 'read',
   data: function() {
     return {
-      allStories: []
+      allStories: [],
+      myStories: []
     };
   },
+  methods: {
+    fetchMyStories: function(id) {
+      axios.get(`/read/${id}`)
+        .then(res => {
+          console.log(res.data);
+          this.myStories = Object.values(res.data.myStories);
+        });
+    }
+  },
+  computed: { ...mapGetters(['user']) },
   created: function() {
     axios.get('/read/all')
       .then(res => {
         console.log(res.data);
         this.allStories = Object.values(res.data.allStories);
       });
-  }
+    if (this.user !== null) {
+      this.fetchMyStories(this.user.id);
+    }
+    this.$store.subscribe((mutation, state) => {
+      if (mutation.type === 'user') {
+        if (mutation.payload === null) {
+          return this.myStories = [];
+        }
+        this.fetchMyStories(state.user.id);
+      }
+    });
+  },
+
 };
 </script>
 

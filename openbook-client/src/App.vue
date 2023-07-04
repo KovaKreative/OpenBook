@@ -24,6 +24,7 @@ export default {
     };
   },
   created: function() {
+    
     axios.get(`/validate`, {
       proxy: {
         port: 3000
@@ -35,7 +36,6 @@ export default {
           return;
         }
         this.$store.dispatch('user', res.data.user);
-        router.push({ path: '/read' })
       });
   }
 };

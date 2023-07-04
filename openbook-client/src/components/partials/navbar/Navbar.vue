@@ -3,18 +3,19 @@
     <div class="container">
       <div class="navbar-brand">
         <h1 class="navbar-item logo">Open Book</h1>
+        <p class="navbar-item" v-if="user">Hello, {{ user.name }}!</p>
         <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" v-on:click="toggleNav"
-          v-bind:class="{ 'is-active': isActive }">
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-        </a>
-      </div>
-      <div class="navbar-menu" v-bind:class="{ 'is-active': isActive }">
-        <div class="navbar-end" v-if="user">
-          <p class="navbar-item">Hello, {{ user.name }}!</p>
-          <router-link to="/new" class="navbar-item">New Story</router-link>
-          <a v-on:click="logOut" class="navbar-item">Log Out</a>
+        v-bind:class="{ 'is-active': isActive }">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+    <div class="navbar-menu" v-bind:class="{ 'is-active': isActive }">
+      <div class="navbar-end">
+        <router-link to="/read" class="navbar-item">Read Stories</router-link>
+        <router-link to="/new" class="navbar-item" v-if="user">New Story</router-link>
+        <a v-on:click="logOut" class="navbar-item" v-if="user">Log Out</a>
         </div>
         <div class="navbar-end" v-if="!user">
           <router-link to="/" class="navbar-item">Log In/Register</router-link>

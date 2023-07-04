@@ -3,7 +3,7 @@
     <section class="hero is-medium">
       <div class="hero-body">Hero</div>
     </section>
-    <div class="container">
+    <div v-if="!user" class="container">
       <Login />
     </div>
   </div>
@@ -12,7 +12,7 @@
 <script>
 
 import { mapGetters } from 'vuex';
-// import router from '../router';
+import router from '../router';
 import Login from './Login.vue';
 
 export default {
@@ -20,12 +20,18 @@ export default {
   components: {
     Login
   },
-  computed: { ...mapGetters['user'] },
+  computed: { ...mapGetters(['user']) },
   created: function() {
-    console.log(this);
-    if(this.user) {
-      router.push({ path: '/read' })
+    if (this.user !== null) {
+      return router.push({ path: '/read' });
     }
+
+    this.$store.subscribe((mutation, state) => {
+      if (mutation.type === 'user' && mutation.payload !== null) {
+        return router.push({ path: '/read' });
+      }
+    });
+
   }
 };
 </script>

@@ -23,12 +23,11 @@ export default {
   computed: { ...mapGetters(['user']) },
   created: function() {
     if (this.user !== null) {
-      return router.push({ path: '/read' });
+      return router.push({ path: '/stories' });
     }
-
     this.$store.subscribe((mutation, state) => {
       if (mutation.type === 'user' && mutation.payload !== null) {
-        return router.push({ path: '/read' });
+        return router.push({ path: '/stories' });
       }
     });
 

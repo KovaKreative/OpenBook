@@ -30,10 +30,8 @@ app.use(express.static('public'));
 const usersRoutes = require('./routes/user');
 const storiesRoutes = require('./routes/stories');
 const readRoutes = require('./routes/read');
-const newStoryRoutes = require('./routes/new-story');
-const storyManageRoutes = require('./routes/my-story');
-const contributionRoutes = require('./routes/contribute');
-const readContributionRoutes = require('./routes/read-contribution');
+const storyRoutes = require('./routes/story');
+const contributeRoutes = require('./routes/contribute');
 
 // Mount all resource routes
 // Note: Feel free to replace the example routes below with your own
@@ -41,10 +39,8 @@ const readContributionRoutes = require('./routes/read-contribution');
 app.use('/', usersRoutes);
 app.use('/stories', storiesRoutes);
 app.use('/read', readRoutes);
-app.use('/story', newStoryRoutes);
-app.use('/manage', storyManageRoutes);
-app.use('/contribute', contributionRoutes);
-app.use('/contribution', readContributionRoutes);
+app.use('/story', storyRoutes);
+app.use('/contribute', contributeRoutes);
 // Note: mount other resources here, using the same pattern above
 
 // Home page

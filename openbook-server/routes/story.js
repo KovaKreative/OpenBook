@@ -3,18 +3,20 @@ const router = express.Router();
 const writeQueries = require('../db/queries/write-queries');
 
 router.use((req, res, next) => {
-  if (!req.session.userID) {
+  if (!req.session.email) {
     return res.redirect('/login');
   }
   next();
 });
 
-router.get('/new', (req, res) => {
-  const templateVars = { userName: req.session.userName };
-  res.render('new_story', templateVars);
-});
+// router.get('/new', (req, res) => {
+//   const templateVars = { userName: req.session.userName };
+//   res.render('new_story', templateVars);
+// });
 
-router.post('/save/:id/:publish', (req, res) => {
+router.post('/new', (req, res) => {
+  console.log(req.body);
+  return res.json({ success: true });
   const data = req.body;
   const publish = req.params.publish === "true" ? true : false;
   const draftID = req.params.id === "null" ? null : Number(req.params.id);
@@ -35,7 +37,7 @@ router.post('/save/:id/:publish', (req, res) => {
 
   if (!draftID) {
     return writeQueries.saveNewStory(req.session.userID, chapter, story)
-    .then(id => {
+      .then(id => {
         res.send(String(id));
       })
       .catch((err) => {

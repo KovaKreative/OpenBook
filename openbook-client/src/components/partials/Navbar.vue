@@ -28,7 +28,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import axios from 'axios';
-import router from '../../../router';
+import router from '../../router';
 
 export default {
   name: 'navbar',
@@ -61,7 +61,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="sass" scoped>
-@use '../../../mq' as mq
+@use '../../mq' as mq
 
 .navbar
   // background-color: #481818

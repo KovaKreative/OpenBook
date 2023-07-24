@@ -9,7 +9,7 @@
 <script>
 import axios from 'axios';
 
-import Navbar from '../src/components/partials/navbar/Navbar';
+import Navbar from '../src/components/partials/Navbar';
 
 export default {
   name: 'App',

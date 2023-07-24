@@ -1,7 +1,7 @@
 <template>
   <main class="new container mt-5" id="story-editor">
     <h2 class="title">New Story</h2>
-    <form @submit.prevent="publish(controlForm)">
+    <form @submit.prevent="save(controlForm, true)">
       <div class="field">
         <label class="label" for="storyTitle">Story Title:</label>
         <div class="control">
@@ -64,7 +64,7 @@
         <label class="label" for="chapterText">Chapter body:</label>
         <div class="control">
           <textarea class="textarea has-fixed-size" rows="10" id="text-editor" name="chapterText"
-            v-model="controlForm.body" autocomplete="off"></textarea>
+            @input="wordCount(controlForm.body)" v-model="controlForm.body" autocomplete="off"></textarea>
         </div>
       </div>
       <div class="notification is-danger" v-if="notifications.length">
@@ -76,7 +76,7 @@
           <p class="level-item">Word count: <span id="word-counter">{{ words }}</span></p>
         </div>
         <div class="action-buttons">
-          <button id="save-story" v-on:click="save(controlForm)">Save</button>
+          <button id="save-story" v-on:click="save(controlForm, false)">Save</button>
           <button id="publish" type="submit">Publish</button>
           <button id="discard-story" v-on:click="discard()">Discard</button>
         </div>
@@ -98,8 +98,18 @@ export default {
     };
   },
   methods: {
-    save: function(form) {
-      axios.post('/story/new', { ...this.controlForm },
+    save: function(form, publish) {
+      this.notifications = [];
+      // for (const field in form) {
+      //   if (form[field].length <= 0) {
+      //     return this.notifications.push("Please make sure to complete all fields.");
+      //   }
+      // }
+      // if (form.body.length < 20) {
+      //   return this.notifications.push("The body of the chapter needs to be at least 20 characters.");
+      // }
+      axios.post('/story/new',
+        { ...form, publish },
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -113,12 +123,17 @@ export default {
           console.log(err);
         });
     },
-    publish: function(form) {
-
-    },
     discard: function() {
 
+    },
+    wordCount: function(text) {
+      this.letters = text.replaceAll(' ', '').length;
+      const buffer = text.split(' ');
+      this.words = buffer.length - (buffer[0] === "");
     }
+  },
+  created: function() {
+    this.wordCount(this.controlForm.body);
   }
 };
 </script>

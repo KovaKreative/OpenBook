@@ -182,7 +182,7 @@ export default {
             this.registerForm[field] = '';
           }
           this.$store.dispatch('user', res.data.user);
-          router.push({ path: '/read' });
+          router.push({ path: '/stories' });
         })
         .catch(err => {
           console.log(err);

@@ -43,6 +43,14 @@
               <span>{{ story.completed ? 'Completed' : 'Ongoing' }}</span>
             </p>
             <p> {{ story.genre }} / {{ story.category }}</p>
+            <div class="level mt-2">
+              <router-link class="level-item has-text-success" :to="{ path: `edit/${story.id}` }">
+                <i class="fas fa-edit" aria-hidden="true"></i>
+              </router-link>
+              <router-link class="level-item has-text-danger" :to="{ path: `edit/${story.id}` }">
+                <i class="fas fa-trash" aria-hidden="true"></i>
+              </router-link>
+            </div>
           </div>
           <footer class="card-footer p-2">
             <p>Published {{ story.publish_date }}</p>

@@ -5,8 +5,7 @@
       <div class="field">
         <label class="label" for="storyTitle">Story Title:</label>
         <div class="control">
-          <input class="input" type="text" name="storyTitle" id="story-title" autocomplete="off"
-            v-model="story.title">
+          <input class="input" type="text" name="storyTitle" id="story-title" autocomplete="off" v-model="story.title">
         </div>
       </div>
       <div class="field">
@@ -90,6 +89,8 @@
 
 <script>
 import axios from 'axios';
+import router from '../router';
+
 export default {
   name: "new",
   data: function() {
@@ -106,7 +107,7 @@ export default {
       this.notifications = [];
       this.warnings = [];
       for (const field in form) {
-        if (typeof(form[field]) === 'string' && form[field].length <= 0) {
+        if (typeof (form[field]) === 'string' && form[field].length <= 0) {
           return this.warnings.push("Please make sure to complete all fields.");
         }
       }
@@ -125,26 +126,27 @@ export default {
           const data = res.data;
           console.log(data);
 
-          if(data.err) {
+          if (data.err) {
             return this.warnings.push(data.err);
           }
 
           const id = data.id;
-          if(id) {
+          if (id) {
             this.story.id = Number(id);
           }
-          
+
           this.notifications.push("Draft saved successfully");
-          if(publish) {
+          
+          if (publish) {
             this.notifications.push("This draft has been published. It is now visible to other users.");
-          }          
+          }
         })
         .catch(err => {
           console.log(err);
         });
     },
     discard: function() {
-
+      router.push({ path: '/stories' });
     },
     wordCount: function(text) {
       this.letters = text.replaceAll(' ', '').length;

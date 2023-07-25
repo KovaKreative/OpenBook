@@ -15,20 +15,17 @@ router.use((req, res, next) => {
 // });
 
 router.post('/new', (req, res) => {
-  console.log(req.body);
-  return res.json({ success: true });
   const data = req.body;
-  const publish = req.params.publish === "true" ? true : false;
-  const draftID = req.params.id === "null" ? null : Number(req.params.id);
-
+  const draftID = data.id;
+  
   const chapter = {
-    title: data.chapterTitle,
-    body: data.chapterText,
-    published: publish
+    title: data.chapter,
+    body: data.body,
+    published: data.publish
   };
 
   const story = {
-    title: data.storyTitle,
+    title: data.title,
     description: data.description,
     category: data.category,
     genre: data.genre,
@@ -36,22 +33,22 @@ router.post('/new', (req, res) => {
   };
 
   if (!draftID) {
-    return writeQueries.saveNewStory(req.session.userID, chapter, story)
+    return writeQueries.saveNewStory(req.session.email, chapter, story)
       .then(id => {
-        res.send(String(id));
+        return res.json({ success: true, id: String(id) })
       })
       .catch((err) => {
         console.log(err);
-        res.send(false);
+        return res.json({ success: false, err })
       });
-  }
-
-  writeQueries.saveExistingStory(req.session.draftId, req.session.userID, chapter, story)
+    }
+    
+    writeQueries.saveExistingStory(draftID, req.session.email, chapter, story)
     .then(() => {
-      return res.send(String(draftID));
+      return res.json({ success: true })
     })
     .catch(() => {
-      res.send(false);
+      return res.json({ success: false, err })
     });
 
 });

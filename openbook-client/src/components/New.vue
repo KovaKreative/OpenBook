@@ -100,14 +100,14 @@ export default {
   methods: {
     save: function(form, publish) {
       this.notifications = [];
-      // for (const field in form) {
-      //   if (form[field].length <= 0) {
-      //     return this.notifications.push("Please make sure to complete all fields.");
-      //   }
-      // }
-      // if (form.body.length < 20) {
-      //   return this.notifications.push("The body of the chapter needs to be at least 20 characters.");
-      // }
+      for (const field in form) {
+        if (form[field].length <= 0) {
+          return this.notifications.push("Please make sure to complete all fields.");
+        }
+      }
+      if (form.body.length < 20) {
+        return this.notifications.push("The body of the chapter needs to be at least 20 characters.");
+      }
       axios.post('/story/new',
         { ...form, publish },
         {

@@ -18,8 +18,9 @@ router.post('/register', (req, res) => {
   userQueries.registerNewUser({ name: userName, email, hash })
     .then((user) => {
       console.log("Registration successful", user);
-      req.session.userID = user.email;
+      req.session.email = user.email;
       req.session.userName = user.name;
+      req.session.id = user.id;
       res.status(200).json({ success: true, user: { name: user.name, id: user.id } });
     })
     .catch((err) => {
@@ -69,6 +70,7 @@ router.post('/login', (req, res) => {
       console.log("Login successful");
       req.session.email = user.email;
       req.session.name = user.name;
+      req.session.id = user.id;
       res.status(200).json({ success: true, user: { name: user.name, id: user.id } });
     });
 });

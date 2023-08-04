@@ -65,8 +65,11 @@ router.post('/discard/', (req, res) => {
 });
 
 router.get('/edit/:id', (req, res) => {
-  storyQueries.getRootChapter(req.params.id)
+  storyQueries.getEditStory(req.params.id, req.session.id)
     .then(data => {
+      if (data.err) {
+        return res.json({ success: false, err: data.err });
+      }
       return res.json({ success: true, story: data });
     })
     .catch(err => {

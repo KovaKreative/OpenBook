@@ -167,7 +167,10 @@ export default {
   created: function() {
     axios.get(`/story/edit/${this.$route.params.id}`)
       .then(res => {
-        console.log(res.data.story);
+        if(!res.data.success) {
+          console.log(res.data.err);
+          router.push({ path: '/stories' });
+        }
         const { body, story_title, title, description, category, genre, age_rating, published } = res.data.story;
         this.story = { ...this.story, title: story_title, chapter: title, description, body, category, genre, rating: age_rating, published };
         this.wordCount(this.story.body);

@@ -50,6 +50,26 @@ const getRootChapter = (storyId) => {
     });
 };
 
+// fetch root data for a story to edit
+const getEditStory = (storyId, userId) => {
+  return db.query(`
+  SELECT stories.story_title, TO_CHAR(stories.date_created, 'FMMM/DD/YY, HH:MI:SS') AS publish_date, chapters.title, stories.id , chapters.body, users.id as user_id, stories.genre, stories.category, stories.age_rating, stories.description, chapters.published
+  FROM stories
+  JOIN users ON stories.author_id = users.id
+  JOIN chapters ON stories.chapter_id = chapters.id
+  WHERE stories.id = $1
+  `, [storyId])
+    .then(res => {
+      if (res.rows[0].user_id != userId) {
+        return { err: "Permission denied" };
+      }
+      return res.rows[0];
+    })
+    .catch(err => {
+      return null;
+    });
+};
+
 // WIP should fetch winning contributions
 const getChildrenChapters = (storyId) => {
   return db.query(`
@@ -152,12 +172,12 @@ const getWinnersByStoryId = (storyId) => {
   FROM winners
   WHERE story_id = $1
   `, [storyId])
-  . then(winners => {
-    return winners.rows;
-  })
-  .catch(err => {
-    return null;
-  });
+    .then(winners => {
+      return winners.rows;
+    })
+    .catch(err => {
+      return null;
+    });
 };
 
-module.exports = { getStories, getMyStories, getRootChapter, getChildrenChapters, getChapterData, getChapter, getBookmarkedStories, getUserContributions, getStoryContributions, getStoryStatus, getContributionsById, getWinnersByStoryId, getChapterFromContribution };
+module.exports = { getStories, getMyStories, getRootChapter, getEditStory, getChildrenChapters, getChapterData, getChapter, getBookmarkedStories, getUserContributions, getStoryContributions, getStoryStatus, getContributionsById, getWinnersByStoryId, getChapterFromContribution };

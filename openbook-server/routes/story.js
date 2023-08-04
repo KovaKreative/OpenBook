@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const writeQueries = require('../db/queries/write-queries');
+const storyQueries = require('../db/queries/story-queries');
 
 router.use((req, res, next) => {
   if (!req.session.email) {
@@ -17,7 +18,7 @@ router.use((req, res, next) => {
 router.post('/new', (req, res) => {
   const data = req.body;
   const draftID = data.id;
-  
+
   const chapter = {
     title: data.chapter,
     body: data.body,
@@ -35,20 +36,20 @@ router.post('/new', (req, res) => {
   if (!draftID) {
     return writeQueries.saveNewStory(req.session.email, chapter, story)
       .then(id => {
-        return res.json({ success: true, id: String(id) })
+        return res.json({ success: true, id: String(id) });
       })
       .catch((err) => {
         console.log(err);
-        return res.json({ success: false, err })
+        return res.json({ success: false, err });
       });
-    }
-    
-    writeQueries.saveExistingStory(draftID, req.session.email, chapter, story)
+  }
+
+  writeQueries.saveExistingStory(draftID, req.session.email, chapter, story)
     .then(() => {
-      return res.json({ success: true })
+      return res.json({ success: true });
     })
     .catch(() => {
-      return res.json({ success: false, err })
+      return res.json({ success: false, err });
     });
 
 });
@@ -62,5 +63,17 @@ router.post('/discard/', (req, res) => {
     });
 
 });
+
+router.get('/edit/:id', (req, res) => {
+  storyQueries.getRootChapter(req.params.id)
+    .then(data => {
+      return res.json({ success: true, story: data });
+    })
+    .catch(err => {
+      console.log(err);
+      return res.json({ success: false, err });
+    });
+});
+
 
 module.exports = router;

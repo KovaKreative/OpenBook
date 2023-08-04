@@ -15,7 +15,9 @@
         </div>
       </div>
       <div class="field is-horizontal">
-        <label class="label field-label" for="category">Category:</label>
+        <div class="field-label is-normal">
+          <label class="label" for="category">Category:</label>
+        </div>
         <div class="control field-body">
           <div class="select">
             <select name="category" v-model="story.category">
@@ -25,8 +27,9 @@
             </select>
           </div>
         </div>
-
-        <label class="label field-label" for="genre">Genre:</label>
+        <div class="field-label is-normal">
+          <label class="label" for="genre">Genre:</label>
+        </div>
         <div class="control field-body">
           <div class="select">
             <select name="genre" v-model="story.genre">
@@ -39,8 +42,9 @@
             </select>
           </div>
         </div>
-
-        <label class="label field-label" for="rating">Rating:</label>
+        <div class="field-label is-normal">
+          <label class="label" for="rating">Rating:</label>
+        </div>
         <div class="control field-body">
           <div class="select">
             <select name="rating" v-model="story.rating">
@@ -51,6 +55,13 @@
               <option value="N/A">N/A</option>
             </select>
           </div>
+        </div>
+
+        <div class="field-label is-normal">
+          <label class="label" for="published">Published:</label>
+        </div>
+        <div class="control field-body">
+          <input type="checkbox" v-model="story.published">
         </div>
       </div>
       <div class="field">
@@ -79,7 +90,6 @@
         </div>
         <div class="action-buttons">
           <button id="save-story" v-on:click="save(story, false)">Save</button>
-          <button id="publish" v-on:click="save(story, true)">Publish</button>
           <button id="discard-story" v-on:click="discard()">Discard</button>
         </div>
       </footer>
@@ -97,7 +107,7 @@ export default {
     return {
       notifications: [],
       warnings: [],
-      story: { id: null, title: '', description: '', chapter: '', body: '', category: '', genre: '', rating: '' },
+      story: { id: null, title: '', description: '', chapter: '', body: '', category: '', genre: '', rating: '', published: false },
       letters: 0,
       words: 0
     };
@@ -114,8 +124,8 @@ export default {
       if (form.body.length < 20) {
         return this.warnings.push("The body of the chapter needs to be at least 20 characters.");
       }
-      axios.post('/story/new',
-        { ...form, publish },
+      axios.post(`/story/update/${this.params.id}`,
+        { ...form },
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -157,10 +167,12 @@ export default {
   created: function() {
     axios.get(`/story/edit/${this.$route.params.id}`)
       .then(res => {
-        console.log(res.data);
+        console.log(res.data.story);
+        const { body, story_title, title, description, category, genre, age_rating, published } = res.data.story;
+        this.story = { ...this.story, title: story_title, chapter: title, description, body, category, genre, rating: age_rating, published };
+        this.wordCount(this.story.body);
       })
       .catch(err => console.log(err));
-    this.wordCount(this.story.body);
   }
 };
 </script>
